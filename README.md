@@ -1,3 +1,6 @@
+go-finder
+=========
+
 "Finder" is a simple library to find files in your filesystem (as it's name suggests), using pure Go (no external dependencies).
 
 Please, don't use it until I write some tests (this library is just my playgound). But feel free to help me improve the library, as it's my very first Go code.
