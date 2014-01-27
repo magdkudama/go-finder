@@ -73,7 +73,7 @@ func readDirectory(path string, depth int, baseDepth int, f Finder) []os.FileInf
       } else {
         add := true
         checkName(f.namesLike, element.Name(), true, &add)
-        checkName(f.namesNotLike, element.Name(), true, &add)
+        checkName(f.namesNotLike, element.Name(), false, &add)
         if add {
           items = append(items, element)
         }
