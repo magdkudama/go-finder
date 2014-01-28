@@ -9,6 +9,8 @@ It's heavily inspired on the awesome [Symfony Finder Component](https://github.c
 
 ~~Please, don't use it until I write some tests~~ (this library is just my playground). But feel free to help me improve the library, as it's my very first Go code.
 
+[Click to view documentation (auto-generated)](https://godoc.org/github.com/magdkudama/go-finder)
+
 ## Quick Start
 
 ```go
