@@ -1,6 +1,8 @@
 go-finder
 =========
 
+[![Build Status](https://travis-ci.org/magdkudama/go-finder.png?branch=master)](https://travis-ci.org/magdkudama/go-finder)
+
 "Finder" is a simple library to find files in your filesystem (as it's name suggests), using pure Go (no external dependencies).
 
 It's heavily inspired on the awesome [Symfony Finder Component](https://github.com/symfony/Finder)
