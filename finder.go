@@ -25,10 +25,27 @@ type FinderResult struct {
   err error
 }
 
-func checkName(names []*regexp.Regexp, elementName string, hasToMatch bool, add *bool) {
+func checkName(names []*regexp.Regexp, elementName string, add *bool) {
+  if *add == true {
+    if len(names) > 0 {
+      someoneMatches := false
+      for _,r := range names {
+        if r.MatchString(elementName) {
+          someoneMatches = true
+          break
+        }
+      }
+      if !someoneMatches {
+        *add = false
+      }
+    }
+  }
+}
+
+func checkNotName(names []*regexp.Regexp, elementName string, add *bool) {
   if *add == true {
     for _,r := range names {
-      if r.MatchString(elementName) == (!hasToMatch) {
+      if r.MatchString(elementName) {
         *add = false
         break
       }
@@ -72,8 +89,8 @@ func readDirectory(path string, depth int, baseDepth int, f Finder) []os.FileInf
         }
       } else {
         add := true
-        checkName(f.namesLike, element.Name(), true, &add)
-        checkName(f.namesNotLike, element.Name(), false, &add)
+        checkName(f.namesLike, element.Name(), &add)
+        checkNotName(f.namesNotLike, element.Name(), &add)
         if add {
           items = append(items, element)
         }
@@ -87,21 +104,19 @@ func readDirectory(path string, depth int, baseDepth int, f Finder) []os.FileInf
 func Create(path string) FinderResult {
   path = strings.Trim(path, " ")
 
+  if path[(len(path) - 1):] == "/" && len(path) > 1 {
+    path = path[:(len(path) - 1)]
+  }
+
   baseFinder := FinderResult {
     finder: Finder { in: path },
     err: nil,
   }
 
-  if path[(len(path) - 1):] == "/" {
-    path = path[:(len(path) - 1)]
-  }
-
   fi,err := os.Lstat(path)
   if err != nil {
     baseFinder.err = err
-  }
-
-  if !fi.IsDir() {
+  } else if !fi.IsDir() {
     baseFinder.err = ErrNotDir
   }
 
@@ -136,7 +151,7 @@ func (f FinderResult) Name(pattern string) FinderResult {
   if e != nil {
     f.err = e
   } else {
-    f.finder.namesLike = append(f.finder.namesNotLike, regexp)
+    f.finder.namesLike = append(f.finder.namesLike, regexp)
   }
 
   return f
