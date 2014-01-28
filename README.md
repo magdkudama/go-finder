@@ -35,6 +35,7 @@ func main() {
 
 * Support filtering by size
 * Exclude directories even before parsing
+* Allow minDepth and maxDepth
 
 ## Contributors
 
