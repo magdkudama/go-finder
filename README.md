@@ -5,7 +5,7 @@ go-finder
 
 "Finder" is a simple library to find files in your filesystem (as it's name suggests), using pure Go (no external dependencies).
 
-It's heavily inspired on the awesome [Symfony Finder Component](https://github.com/symfony/Finder)
+It's heavily inspired (I mean... it's a bad copy of...) on the awesome [Symfony Finder Component](https://github.com/symfony/Finder)
 
 ~~Please, don't use it until I write some tests~~ (this library is just my playground). But feel free to help me improve the library, as it's my very first Go code.
 
@@ -30,6 +30,7 @@ func main() {
 		MinSize("2 K").
 		MaxSize("4 Mi").
 		ExcludeHidden().
+		ExcludeVCS().
 		Get()
 
 	for _, element := range results {
@@ -42,6 +43,7 @@ func main() {
 
 * ~~Support filtering by size~~ Done! And supports defining min size and max size in a "fancy" format
 * ~~Exclude hidden directories~~
+* ~~Exclude VCS directories~~
 * Exclude directories even before parsing
 * Allow minDepth and maxDepth
 

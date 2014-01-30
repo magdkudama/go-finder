@@ -17,7 +17,7 @@ type finder struct {
   namesLike, namesNotLike []*regexp.Regexp
   in string
   depth int
-  excludeHidden bool
+  excludeHidden, excludeVCS bool
   minSize, maxSize int64
 }
 
@@ -129,6 +129,10 @@ func (finder *Finder) ExcludeHidden() *Finder {
   return finder
 }
 
+func (finder *Finder) ExcludeVCS() *Finder {
+  finder.f.excludeVCS = true
+  return finder
+}
 
 func (finder *Finder) Get() []os.FileInfo {
   return readDirectory(finder.f.in, 0, depth(finder.f.in), finder.f)

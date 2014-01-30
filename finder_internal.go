@@ -13,6 +13,16 @@ func isHidden(directoryName string) bool {
   return (directoryName[0:1] == ".")
 }
 
+func isVCS(directoryName string) bool {
+  vcs := []string{".svn", "_svn", "CVS", "_darcs", ".arch-params", ".monotone", ".bzr", ".git", ".hg"}
+  for _,vcsElem := range vcs {
+    if vcsElem == directoryName {
+      return true
+    }
+  }
+  return false
+}
+
 func sizeParser(value string) (n int64, err error) {
   elements := strings.Split(value, " ")
 
@@ -126,9 +136,11 @@ func readDirectory(path string, depth int, baseDepth int, f finder) []os.FileInf
         newPath := path + string(os.PathSeparator) + element.Name()
         if isValidDepth(newPath, f.depth, baseDepth) {
           if !f.excludeHidden || !isHidden(element.Name()) {
-            recElements := readDirectory(newPath, depth + 1, baseDepth, f)
-            for _,recElement := range recElements {
-              items = append(items, recElement)
+            if (f.excludeVCS && !isVCS(element.Name()) || !f.excludeVCS) {
+              recElements := readDirectory(newPath, depth + 1, baseDepth, f)
+              for _,recElement := range recElements {
+                items = append(items, recElement)
+              }
             }
           }
         }
