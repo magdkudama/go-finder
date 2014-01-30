@@ -25,7 +25,7 @@ type Finder struct {
   err error
 }
 
-func Create(path string) Finder {
+func Create(path string) *Finder {
   path = strings.Trim(path, " ")
 
   if path[(len(path) - 1):] == "/" && len(path) > 1 {
@@ -44,10 +44,10 @@ func Create(path string) Finder {
     baseFinder.err = ErrNotDir
   }
 
-  return baseFinder
+  return &baseFinder
 }
 
-func (finder Finder) Depth(depth int) Finder {
+func (finder *Finder) Depth(depth int) *Finder {
   if depth < 0 {
     finder.err = ErrInvalidArgument
   } else {
@@ -57,7 +57,7 @@ func (finder Finder) Depth(depth int) Finder {
   return finder
 }
 
-func (finder Finder) NotName(pattern string) Finder {
+func (finder *Finder) NotName(pattern string) *Finder {
   regexp, e := regexp.Compile(pattern)
 
   if e != nil {
@@ -69,7 +69,7 @@ func (finder Finder) NotName(pattern string) Finder {
   return finder
 }
 
-func (finder Finder) Name(pattern string) Finder {
+func (finder *Finder) Name(pattern string) *Finder {
   regexp, e := regexp.Compile(pattern)
 
   if e != nil {
@@ -81,7 +81,7 @@ func (finder Finder) Name(pattern string) Finder {
   return finder
 }
 
-func (finder Finder) MinSize(size string) Finder {
+func (finder *Finder) MinSize(size string) *Finder {
   result, err := sizeParser(size)
 
   if err == nil {
@@ -102,7 +102,7 @@ func (finder Finder) MinSize(size string) Finder {
   return finder
 }
 
-func (finder Finder) MaxSize(size string) Finder {
+func (finder *Finder) MaxSize(size string) *Finder {
   result, err := sizeParser(size)
 
   if err == nil {
@@ -123,6 +123,6 @@ func (finder Finder) MaxSize(size string) Finder {
   return finder
 }
 
-func (finder Finder) Get() []os.FileInfo {
+func (finder *Finder) Get() []os.FileInfo {
   return readDirectory(finder.f.in, 0, depth(finder.f.in), finder.f)
 }

@@ -124,7 +124,7 @@ func TestSizes(t *testing.T) {
 }
 
 var getProvider = []struct {
-  finder Finder
+  finder *Finder
   quantity int
 } {
   {Create("fixture").Depth(0), 1},
