@@ -46,6 +46,7 @@ func main() {
 * ~~Exclude VCS directories~~
 * Exclude directories even before parsing
 * Allow minDepth and maxDepth
+* Clean-up API and internal methods
 
 ## Contributors
 
