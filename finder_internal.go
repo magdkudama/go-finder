@@ -9,6 +9,10 @@ import (
   "strings"
 )
 
+func isHidden(directoryName string) bool {
+  return (directoryName[0:1] == ".")
+}
+
 func sizeParser(value string) (n int64, err error) {
   elements := strings.Split(value, " ")
 
@@ -121,9 +125,11 @@ func readDirectory(path string, depth int, baseDepth int, f finder) []os.FileInf
       if element.IsDir() {
         newPath := path + string(os.PathSeparator) + element.Name()
         if isValidDepth(newPath, f.depth, baseDepth) {
-          recElements := readDirectory(newPath, depth + 1, baseDepth, f)
-          for _,recElement := range recElements {
-            items = append(items, recElement)
+          if !f.excludeHidden || !isHidden(element.Name()) {
+            recElements := readDirectory(newPath, depth + 1, baseDepth, f)
+            for _,recElement := range recElements {
+              items = append(items, recElement)
+            }
           }
         }
       } else {

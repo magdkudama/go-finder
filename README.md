@@ -27,8 +27,9 @@ func main() {
 		Depth(1).
 		Name(".go").
 		NotName(".html").
-		MinSize("2 K")
-		MaxSize("4 Mi")
+		MinSize("2 K").
+		MaxSize("4 Mi").
+		ExcludeHidden().
 		Get()
 
 	for _, element := range results {
@@ -40,6 +41,7 @@ func main() {
 ## To Do
 
 * ~~Support filtering by size~~ Done! And supports defining min size and max size in a "fancy" format
+* ~~Exclude hidden directories~~
 * Exclude directories even before parsing
 * Allow minDepth and maxDepth
 

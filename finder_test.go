@@ -128,9 +128,10 @@ var getProvider = []struct {
   quantity int
 } {
   {Create("fixture").Depth(0), 1},
-  {Create("fixture").Depth(5), 10},
-  {Create("fixture").Depth(5).NotName(".xml"), 9},
+  {Create("fixture").Depth(5), 11},
+  {Create("fixture").Depth(5).NotName(".xml"), 10},
   {Create("fixture").Depth(4).Name(".xml").Name(".yml"), 2},
+  {Create("fixture").ExcludeHidden().Depth(1), 6},
   {Create("fixture/f1").Depth(0), 0},
   {Create("fixture/f1").Depth(1), 1},
   {Create("fixture/f1").Depth(2), 3},
