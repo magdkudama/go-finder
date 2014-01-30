@@ -26,7 +26,9 @@ func main() {
 		Create("/my/path/").
 		Depth(1).
 		Name(".go").
-		NotName(".html")
+		NotName(".html").
+		MinSize("2 K")
+		MaxSize("4 Mi")
 		Get()
 
 	for _, element := range results {
@@ -37,7 +39,7 @@ func main() {
 
 ## To Do
 
-* Support filtering by size
+* ~~Support filtering by size~~ Done! And supports defining min size and max size in a "fancy" format
 * Exclude directories even before parsing
 * Allow minDepth and maxDepth
 

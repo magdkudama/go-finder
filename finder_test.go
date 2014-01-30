@@ -89,6 +89,40 @@ func TestNames(t *testing.T) {
   }
 }
 
+var sizeProvider = []struct {
+  value string
+  shouldFail bool
+  result int64
+} {
+  {"1", false, 1},
+  {"1 K", false, 1000},
+  {"1 Ki", false, 1024},
+  {"1 M", false, 1000000},
+  {"100 Mi", false, 104857600},
+  {"23 G", false, 23000000000},
+  {"12 Gi", false, 12884901888},
+  {"12G", true, 0},
+  {"12 T", true, 0},
+  {"1221X", true, 0},
+  {"12  Gi", true, 0},
+}
+
+func TestSizes(t *testing.T) {
+  for i,elem := range sizeProvider {
+    finder := Create("fixture")
+    finder = finder.MinSize(elem.value)
+    if elem.shouldFail && finder.err == nil {
+      t.Errorf("Sizes test, dataset %d. Expected error, result no error", i)
+    } else if !elem.shouldFail && finder.err != nil {
+      t.Errorf("Sizes test, dataset %d. Expected no error, result error", i)
+    } else if !elem.shouldFail {
+      if finder.finder.minSize != elem.result {
+        t.Errorf("Sizes test, dataset %d. Expected value %d, result %d", i, elem.result, finder.finder.minSize)
+      }
+    }
+  }
+}
+
 var getProvider = []struct {
   finder FinderResult
   quantity int
@@ -105,6 +139,10 @@ var getProvider = []struct {
   {Create("fixture/f2").Depth(20), 1},
   {Create("fixture/f3").Depth(1), 5},
   {Create("fixture/f3").Depth(0), 4},
+  {Create("fixture").MinSize("1 K"), 3},
+  {Create("fixture").MinSize("3 Ki"), 0},
+  {Create("fixture").MinSize("1").MaxSize("1 Ki"), 1},
+  {Create("fixture/f3").Depth(0).MinSize("1 K"), 1},
 }
 
 func TestGet(t *testing.T) {

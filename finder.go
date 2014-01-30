@@ -3,102 +3,26 @@ package finder
 import (
   "os"
   "regexp"
-  "path/filepath"
   "strings"
   "errors"
-  "io/ioutil"
 )
 
 var (
   ErrInvalidArgument = errors.New("finder: invalid argument")
   ErrNotDir = errors.New("finder: not dir")
+  ErrLogic = errors.New("finder: logic exception")
 )
 
 type Finder struct {
   namesLike, namesNotLike []*regexp.Regexp
   in string
   depth int
+  minSize, maxSize int64
 }
 
 type FinderResult struct {
   finder Finder
   err error
-}
-
-func checkName(names []*regexp.Regexp, elementName string, add *bool) {
-  if *add == true {
-    if len(names) > 0 {
-      someoneMatches := false
-      for _,r := range names {
-        if r.MatchString(elementName) {
-          someoneMatches = true
-          break
-        }
-      }
-      if !someoneMatches {
-        *add = false
-      }
-    }
-  }
-}
-
-func checkNotName(names []*regexp.Regexp, elementName string, add *bool) {
-  if *add == true {
-    for _,r := range names {
-      if r.MatchString(elementName) {
-        *add = false
-        break
-      }
-    }
-  }
-}
-
-func isValidDepth(path string, maxDepth int, baseDepth int) bool {
-  pathDepth := depth(path)
-
-  if maxDepth > -1 {
-    maxDepth += baseDepth
-    if pathDepth > maxDepth {
-      return false
-    }
-  }
-
-  return true
-}
-
-func depth(path string) int {
-  separator := string(os.PathSeparator)
-  absolutePath,_ := filepath.Abs(path)
-
-  return len(strings.Split(absolutePath, separator))
-}
-
-func readDirectory(path string, depth int, baseDepth int, f Finder) []os.FileInfo {
-  var items []os.FileInfo
-
-  var elements,err = ioutil.ReadDir(path)
-  if(err == nil) {
-    for _,element := range elements {
-      if element.IsDir() {
-        newPath := path + string(os.PathSeparator) + element.Name()
-        if isValidDepth(newPath, f.depth, baseDepth) {
-          recElements := readDirectory(newPath, depth + 1, baseDepth, f)
-          for _,recElement := range recElements {
-            items = append(items, recElement)
-          }
-        }
-      } else {
-        add := true
-        checkName(f.namesLike, element.Name(), &add)
-        checkNotName(f.namesNotLike, element.Name(), &add)
-        if add {
-          items = append(items, element)
-        }
-      }
-    }
-  }
-
-  return items
 }
 
 func Create(path string) FinderResult {
@@ -109,7 +33,7 @@ func Create(path string) FinderResult {
   }
 
   baseFinder := FinderResult {
-    finder: Finder { in: path },
+    finder: Finder { in: path, minSize: -1, maxSize: -1, depth: -1 },
     err: nil,
   }
 
@@ -152,6 +76,48 @@ func (f FinderResult) Name(pattern string) FinderResult {
     f.err = e
   } else {
     f.finder.namesLike = append(f.finder.namesLike, regexp)
+  }
+
+  return f
+}
+
+func (f FinderResult) MinSize(size string) FinderResult {
+  result, err := sizeParser(size)
+
+  if err == nil {
+    if f.finder.maxSize != -1 {
+      if result > f.finder.maxSize {
+        f.err = ErrLogic
+      } else {
+        f.finder.minSize = result
+      }
+    } else {
+      f.finder.minSize = result
+    }
+  } else {
+    f.finder.minSize = result
+    f.err = err
+  }
+
+  return f
+}
+
+func (f FinderResult) MaxSize(size string) FinderResult {
+  result, err := sizeParser(size)
+
+  if err == nil {
+    if f.finder.minSize != -1 {
+      if result < f.finder.minSize {
+        f.err = ErrLogic
+      } else {
+        f.finder.maxSize = result
+      }
+    } else {
+      f.finder.maxSize = result
+    }
+  } else {
+    f.finder.maxSize = result
+    f.err = err
   }
 
   return f
