@@ -13,27 +13,27 @@ var (
   ErrLogic = errors.New("finder: logic exception")
 )
 
-type Finder struct {
+type finder struct {
   namesLike, namesNotLike []*regexp.Regexp
   in string
   depth int
   minSize, maxSize int64
 }
 
-type FinderResult struct {
-  finder Finder
+type Finder struct {
+  f finder
   err error
 }
 
-func Create(path string) FinderResult {
+func Create(path string) Finder {
   path = strings.Trim(path, " ")
 
   if path[(len(path) - 1):] == "/" && len(path) > 1 {
     path = path[:(len(path) - 1)]
   }
 
-  baseFinder := FinderResult {
-    finder: Finder { in: path, minSize: -1, maxSize: -1, depth: -1 },
+  baseFinder := Finder {
+    f: finder { in: path, minSize: -1, maxSize: -1, depth: -1 },
     err: nil,
   }
 
@@ -47,82 +47,82 @@ func Create(path string) FinderResult {
   return baseFinder
 }
 
-func (f FinderResult) Depth(depth int) FinderResult {
+func (finder Finder) Depth(depth int) Finder {
   if depth < 0 {
-    f.err = ErrInvalidArgument
+    finder.err = ErrInvalidArgument
   } else {
-    f.finder.depth = depth
+    finder.f.depth = depth
   }
 
-  return f
+  return finder
 }
 
-func (f FinderResult) NotName(pattern string) FinderResult {
+func (finder Finder) NotName(pattern string) Finder {
   regexp, e := regexp.Compile(pattern)
 
   if e != nil {
-    f.err = e
+    finder.err = e
   } else {
-    f.finder.namesNotLike = append(f.finder.namesNotLike, regexp)
+    finder.f.namesNotLike = append(finder.f.namesNotLike, regexp)
   }
 
-  return f
+  return finder
 }
 
-func (f FinderResult) Name(pattern string) FinderResult {
+func (finder Finder) Name(pattern string) Finder {
   regexp, e := regexp.Compile(pattern)
 
   if e != nil {
-    f.err = e
+    finder.err = e
   } else {
-    f.finder.namesLike = append(f.finder.namesLike, regexp)
+    finder.f.namesLike = append(finder.f.namesLike, regexp)
   }
 
-  return f
+  return finder
 }
 
-func (f FinderResult) MinSize(size string) FinderResult {
+func (finder Finder) MinSize(size string) Finder {
   result, err := sizeParser(size)
 
   if err == nil {
-    if f.finder.maxSize != -1 {
-      if result > f.finder.maxSize {
-        f.err = ErrLogic
+    if finder.f.maxSize != -1 {
+      if result > finder.f.maxSize {
+        finder.err = ErrLogic
       } else {
-        f.finder.minSize = result
+        finder.f.minSize = result
       }
     } else {
-      f.finder.minSize = result
+      finder.f.minSize = result
     }
   } else {
-    f.finder.minSize = result
-    f.err = err
+    finder.f.minSize = result
+    finder.err = err
   }
 
-  return f
+  return finder
 }
 
-func (f FinderResult) MaxSize(size string) FinderResult {
+func (finder Finder) MaxSize(size string) Finder {
   result, err := sizeParser(size)
 
   if err == nil {
-    if f.finder.minSize != -1 {
-      if result < f.finder.minSize {
-        f.err = ErrLogic
+    if finder.f.minSize != -1 {
+      if result < finder.f.minSize {
+        finder.err = ErrLogic
       } else {
-        f.finder.maxSize = result
+        finder.f.maxSize = result
       }
     } else {
-      f.finder.maxSize = result
+      finder.f.maxSize = result
     }
   } else {
-    f.finder.maxSize = result
-    f.err = err
+    finder.f.maxSize = result
+    finder.err = err
   }
 
-  return f
+  return finder
 }
 
-func (f FinderResult) Get() []os.FileInfo {
-  return readDirectory(f.finder.in, 0, depth(f.finder.in), f.finder)
+func (finder Finder) Get() []os.FileInfo {
+  return readDirectory(finder.f.in, 0, depth(finder.f.in), finder.f)
 }

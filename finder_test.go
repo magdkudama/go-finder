@@ -22,8 +22,8 @@ func TestCreate(t *testing.T) {
       t.Errorf("Create test, dataset %d. Expected error, result no error", i)
     } else if !elem.shouldFail && finder.err != nil {
       t.Errorf("Create test, dataset %d. Expected no error, result error", i)
-    } else if !elem.shouldFail && finder.finder.in != elem.result {
-      t.Errorf("Create test, dataset %d. Expected %q, result %q", i, elem.result, finder.finder.in)
+    } else if !elem.shouldFail && finder.f.in != elem.result {
+      t.Errorf("Create test, dataset %d. Expected %q, result %q", i, elem.result, finder.f.in)
     }
   }
 }
@@ -46,8 +46,8 @@ func TestDepth(t *testing.T) {
       t.Errorf("Depth test, dataset %d. Expected error, result no error", i)
     } else if !elem.shouldFail && finder.err != nil {
       t.Errorf("Depth test, dataset %d. Expected no error, result error", i)
-    } else if !elem.shouldFail && finder.finder.depth != elem.depth {
-      t.Errorf("Depth test, dataset %d. Expected %d, result %d", i, elem.depth, finder.finder.depth)
+    } else if !elem.shouldFail && finder.f.depth != elem.depth {
+      t.Errorf("Depth test, dataset %d. Expected %d, result %d", i, elem.depth, finder.f.depth)
     }
   }
 }
@@ -77,12 +77,12 @@ func TestNames(t *testing.T) {
       t.Errorf("Names test, dataset %d. Expected no error, result error", i)
     } else if !elem.shouldFail {
       if elem.negative {
-        if len(finder.finder.namesNotLike) != 1 {
-          t.Errorf("Names test (not), dataset %d. Expected slice length 1, result %d", i, len(finder.finder.namesNotLike))
+        if len(finder.f.namesNotLike) != 1 {
+          t.Errorf("Names test (not), dataset %d. Expected slice length 1, result %d", i, len(finder.f.namesNotLike))
         }
       } else {
-        if len(finder.finder.namesLike) != 1 {
-          t.Errorf("Names test, dataset %d. Expected slice length 1, result %d", i, len(finder.finder.namesNotLike))
+        if len(finder.f.namesLike) != 1 {
+          t.Errorf("Names test, dataset %d. Expected slice length 1, result %d", i, len(finder.f.namesNotLike))
         }
       }
     }
@@ -116,15 +116,15 @@ func TestSizes(t *testing.T) {
     } else if !elem.shouldFail && finder.err != nil {
       t.Errorf("Sizes test, dataset %d. Expected no error, result error", i)
     } else if !elem.shouldFail {
-      if finder.finder.minSize != elem.result {
-        t.Errorf("Sizes test, dataset %d. Expected value %d, result %d", i, elem.result, finder.finder.minSize)
+      if finder.f.minSize != elem.result {
+        t.Errorf("Sizes test, dataset %d. Expected value %d, result %d", i, elem.result, finder.f.minSize)
       }
     }
   }
 }
 
 var getProvider = []struct {
-  finder FinderResult
+  finder Finder
   quantity int
 } {
   {Create("fixture").Depth(0), 1},

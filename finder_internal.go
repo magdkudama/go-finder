@@ -112,7 +112,7 @@ func depth(path string) int {
   return len(strings.Split(absolutePath, separator))
 }
 
-func readDirectory(path string, depth int, baseDepth int, f Finder) []os.FileInfo {
+func readDirectory(path string, depth int, baseDepth int, f finder) []os.FileInfo {
   var items []os.FileInfo
 
   var elements,err = ioutil.ReadDir(path)
