@@ -26,7 +26,9 @@ func main() {
 		Create("/my/path/").
 		Depth(1).
 		Name(".go").
+		Names([]string{".py",".json"}).
 		NotName(".html").
+		NotNames([]string{".xml",".yml"}).
 		MinSize("2 K").
 		MaxSize("4 Mi").
 		ExcludeHidden().
@@ -44,6 +46,7 @@ func main() {
 * ~~Support filtering by size~~ Done! And supports defining min size and max size in a "fancy" format
 * ~~Exclude hidden directories~~
 * ~~Exclude VCS directories~~
+* Add documentation on methods
 * Exclude directories even before parsing
 * Allow minDepth and maxDepth
 * Clean-up API and internal methods

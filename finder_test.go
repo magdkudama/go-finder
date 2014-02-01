@@ -89,6 +89,43 @@ func TestNames(t *testing.T) {
   }
 }
 
+var namesProvider = []struct {
+  patterns[] string
+  negative bool
+  shouldFail bool
+} {
+  {[]string{"test1", "test2"}, false, false},
+  {[]string{"test1", "(*"}, false, true},
+  {[]string{"test1", "test2"}, true, false},
+  {[]string{"test1", "(*"}, true, true},
+}
+
+func TestSliceNames(t *testing.T) {
+  for i,elem := range namesProvider {
+    finder := Create("fixture")
+    if elem.negative {
+      finder = finder.NotNames(elem.patterns)
+    } else {
+      finder = finder.Names(elem.patterns)
+    }
+    if elem.shouldFail && finder.err == nil {
+      t.Errorf("Names test (slice), dataset %d. Expected error, result no error", i)
+    } else if !elem.shouldFail && finder.err != nil {
+      t.Errorf("Names test (slice), dataset %d. Expected no error, result error", i)
+    } else if !elem.shouldFail {
+      if elem.negative {
+        if len(finder.f.namesNotLike) != 2 {
+          t.Errorf("Names test (not) (slice), dataset %d. Expected slice length 1, result %d", i, len(finder.f.namesNotLike))
+        }
+      } else {
+        if len(finder.f.namesLike) != 2 {
+          t.Errorf("Names test (slice), dataset %d. Expected slice length 1, result %d", i, len(finder.f.namesNotLike))
+        }
+      }
+    }
+  }
+}
+
 var sizeProvider = []struct {
   value string
   shouldFail bool
@@ -131,6 +168,8 @@ var getProvider = []struct {
   {Create("fixture").Depth(5), 12},
   {Create("fixture").Depth(5).NotName(".xml"), 11},
   {Create("fixture").Depth(4).Name(".xml").Name(".yml"), 2},
+  {Create("fixture").Depth(5).NotNames([]string{".xml"}), 11},
+  {Create("fixture").Depth(4).Names([]string{".xml",".yml"}), 2},
   {Create("fixture").ExcludeHidden().Depth(1), 6},
   {Create("fixture").ExcludeVCS().Depth(1), 7},
   {Create("fixture").ExcludeVCS().ExcludeHidden().Depth(1), 6},

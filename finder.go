@@ -70,6 +70,32 @@ func (finder *Finder) NotName(pattern string) *Finder {
   return finder
 }
 
+func (finder *Finder) NotNames(patterns []string) *Finder {
+  var err error = nil
+  for _,pattern := range patterns {
+    finder := finder.NotName(pattern)
+    if finder.err != nil {
+      err = finder.err
+    }
+  }
+
+  finder.err = err
+  return finder;
+}
+
+func (finder *Finder) Names(patterns []string) *Finder {
+  var err error = nil
+  for _,pattern := range patterns {
+    finder := finder.Name(pattern)
+    if finder.err != nil {
+      err = finder.err
+    }
+  }
+
+  finder.err = err
+  return finder;
+}
+
 func (finder *Finder) Name(pattern string) *Finder {
   regexp, e := regexp.Compile(pattern)
 
