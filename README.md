@@ -46,7 +46,7 @@ func main() {
 * ~~Support filtering by size~~ Done! And supports defining min size and max size in a "fancy" format
 * ~~Exclude hidden directories~~
 * ~~Exclude VCS directories~~
-* Add documentation on methods
+* ~~Add documentation on methods~~
 * Exclude directories even before parsing
 * Allow minDepth and maxDepth
 * Clean-up API and internal methods

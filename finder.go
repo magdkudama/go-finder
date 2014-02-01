@@ -26,6 +26,10 @@ type Finder struct {
   err error
 }
 
+// This method initializes the Finder component.
+//
+// Example:
+//    finder := Create("/home/myuser/mydir")
 func Create(path string) *Finder {
   path = strings.Trim(path, " ")
 
@@ -48,6 +52,11 @@ func Create(path string) *Finder {
   return &baseFinder
 }
 
+// Specify the depth to search (0 is the initial directory).
+// If not specified, it will search over all directory structure recursively
+//
+// Example:
+//    finder := Create("/home/myuser/mydir").Depth(1)
 func (finder *Finder) Depth(depth int) *Finder {
   if depth < 0 {
     finder.err = ErrInvalidArgument
@@ -58,6 +67,10 @@ func (finder *Finder) Depth(depth int) *Finder {
   return finder
 }
 
+// Add a pattern that excludes files by name
+//
+// Example:
+//    finder := Create("/home/myuser/mydir").NotName(".py")
 func (finder *Finder) NotName(pattern string) *Finder {
   regexp, e := regexp.Compile(pattern)
 
@@ -70,6 +83,10 @@ func (finder *Finder) NotName(pattern string) *Finder {
   return finder
 }
 
+// Add patterns that excludes files by name
+//
+// Example:
+//    finder := Create("/home/myuser/mydir").NotNames([]string{".py", ".php"})
 func (finder *Finder) NotNames(patterns []string) *Finder {
   var err error = nil
   for _,pattern := range patterns {
@@ -83,6 +100,10 @@ func (finder *Finder) NotNames(patterns []string) *Finder {
   return finder;
 }
 
+// Add pattern that includes only files that match the pattern (by name)
+//
+// Example:
+//    finder := Create("/home/myuser/mydir").Name(".py")
 func (finder *Finder) Names(patterns []string) *Finder {
   var err error = nil
   for _,pattern := range patterns {
@@ -96,6 +117,10 @@ func (finder *Finder) Names(patterns []string) *Finder {
   return finder;
 }
 
+// Add patterns that includes only files that match the patterns (by name)
+//
+// Example:
+//    finder := Create("/home/myuser/mydir").Names([]string{".py", ".php"})
 func (finder *Finder) Name(pattern string) *Finder {
   regexp, e := regexp.Compile(pattern)
 
@@ -108,6 +133,12 @@ func (finder *Finder) Name(pattern string) *Finder {
   return finder
 }
 
+// Filters files by size (size must be greater)
+//
+// Examples:
+//    finder := Create("/home/myuser/mydir").MinSize("1 K")
+//    finder := Create("/home/myuser/mydir").MinSize("230")
+//    finder := Create("/home/myuser/mydir").MinSize("2 Gi")
 func (finder *Finder) MinSize(size string) *Finder {
   result, err := sizeParser(size)
 
@@ -129,6 +160,12 @@ func (finder *Finder) MinSize(size string) *Finder {
   return finder
 }
 
+// Filters files by size (size must be less than the specified)
+//
+// Examples:
+//    finder := Create("/home/myuser/mydir").MaxSize("1 K")
+//    finder := Create("/home/myuser/mydir").MaxSize("230")
+//    finder := Create("/home/myuser/mydir").MaxSize("2 Gi")
 func (finder *Finder) MaxSize(size string) *Finder {
   result, err := sizeParser(size)
 
@@ -150,16 +187,28 @@ func (finder *Finder) MaxSize(size string) *Finder {
   return finder
 }
 
+// Excludes hidden directories (does not parse its contents)
+//
+// Example:
+//    finder := Create("/home/myuser/mydir").ExcludeHidden()
 func (finder *Finder) ExcludeHidden() *Finder {
   finder.f.excludeHidden = true
   return finder
 }
 
+// Excludes VCS directories (does not parse its contents)
+//
+// Example:
+//    finder := Create("/home/myuser/mydir").ExcludeVCS()
 func (finder *Finder) ExcludeVCS() *Finder {
   finder.f.excludeVCS = true
   return finder
 }
 
+// Gets a slide of os.FileInfo elements with the matched files
+//
+// Example:
+//    finder := Create("/home/myuser/mydir").Get()
 func (finder *Finder) Get() []os.FileInfo {
   return readDirectory(finder.f.in, 0, depth(finder.f.in), finder.f)
 }
