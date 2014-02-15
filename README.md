@@ -2,6 +2,7 @@ go-finder
 =========
 
 [![Build Status](https://travis-ci.org/magdkudama/go-finder.png?branch=master)](https://travis-ci.org/magdkudama/go-finder)
+[![Go Walker](http://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/magdkudama/go-finder)
 
 "Finder" is a simple library to find files in your filesystem (as it's name suggests), using pure Go (no external dependencies).
 
