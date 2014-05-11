@@ -12,6 +12,14 @@ It's heavily inspired (I mean... it's a bad copy of...) on the awesome [Symfony 
 
 [Click to view documentation (auto-generated)](https://godoc.org/github.com/magdkudama/go-finder)
 
+[![baby-gopher](https://raw2.github.com/drnic/babygopher-site/gh-pages/images/babygopher-badge.png)](http://www.babygopher.org)
+
+## Installation
+
+```
+go get github.com/magdkudama/go-finder
+```
+
 ## Quick Start
 
 ```go
